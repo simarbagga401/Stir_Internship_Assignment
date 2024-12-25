@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trending Topics</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+
+      .result {
+        display: none;
+        margin-top: 20px;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      .result h3 {
+        margin-top: 0;
+      }
+
+      .json {
+        background-color: #f0f0f0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .link {
+        color: #007bff;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h3 style="color: red">
+      Note: In free Proxymesh plan, the IP address rotates every 12 hours, so
+      expecting new IP At each request is not possible.
+    </h3>
+
+    <h1>Trending Topics</h1>
+
+    <p>
+      <a href="#" class="link" id="run-script-link"
+        >Click here to run the script</a
+      >
+    </p>
+
+    <!-- Result container to display the output after the script runs -->
+    <div class="result" id="result-container">
+      <h3>
+        These are the most happening topics as on <span id="date-time"></span>:
+      </h3>
+      <ul id="trends-list"></ul>
+      <p>
+        <strong>The IP address used for this query was: </strong
+        ><span id="ip-address"></span>
+      </p>
+      <h4>Here’s a JSON extract of this record from the MongoDB:</h4>
+      <pre class="json" id="json-output"></pre>
+      <p>
+        <a href="#" class="link" id="run-query-again"
+          >Click here to run the query again</a
+        >
+      </p>
+    </div>
+
+    <script>
+      // Function to simulate fetching the data
+      async function fetchTrendingData() {
+        const twitterPosts = await fetch("http://localhost:3000/twitter-posts", {
+          method: "GET",
+        })
+        const twitterPostsData = await twitterPosts.json();
+        console.log(twitterPostsData);
+
+        // Display the results
+        document.getElementById("date-time").textContent =
+          twitterPostsData[0].dateTime;
+        document.getElementById("ip-address").textContent =
+          twitterPostsData[0].ipAddress;
+
+        // Update trends list
+        const trendsList = document.getElementById("trends-list");
+        trendsList.innerHTML = ""; // Clear previous list
+        twitterPostsData[0].trendingTopics.forEach((trend) => {
+          const listItem = document.createElement("li");
+          listItem.textContent = trend;
+          trendsList.appendChild(listItem);
+        });
+
+        // Display MongoDB JSON extract
+        document.getElementById("json-output").textContent = JSON.stringify(
+          twitterPostsData,
+          null,
+          2
+        );
+
+        // Show the result container
+        document.getElementById("result-container").style.display = "block";
+      }
+
+      // Add event listener for "run script" link
+      document
+        .getElementById("run-script-link")
+        .addEventListener("click", function (event) {
+          event.preventDefault();
+          fetchTrendingData();
+        });
+
+      // Add event listener for "run query again" link
+      document
+        .getElementById("run-query-again")
+        .addEventListener("click", function (event) {
+          event.preventDefault();
+          fetchTrendingData();
+        });
+    </script>
+  </body>
+</html>

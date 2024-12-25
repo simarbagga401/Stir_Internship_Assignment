@@ -1,19 +1,20 @@
 require("dotenv").config();
-const { v4: uuidv4 } = require("uuid");
-const mongoose = require("mongoose");
-const twitterDataFetching = require("./script");
+const express = require("express");
+const app = express();
+const fetchTwitterPosts = require("./twitterPostLogic");
 
-const twitterPostSchema = new mongoose.Schema({
-  id: { type: String },
-  trendingTopics: Array,
-  ipAddress: String,
-  dateTime: { type: Date },
+app.set("view engine", "ejs");
+
+app.get("/", async (req, res) => {
+  res.render("index");
 });
 
-// Connect to MongoDB
-mongoose.connect(process.env.DB_URI);
+app.get("/twitter-posts", async (req, res) => {
+  const twitterPosts = await fetchTwitterPosts();
+  console.log(twitterPosts)
+  res.json(twitterPosts);
+});
 
-(async function test() {
-  console.log("twitterDataFetching result", await twitterDataFetching());
-  console.log("db uri", process.env.DB_URI);
-})();
+app.listen(3000, () => {
+  console.log("Server is running on port 3000");
+});
