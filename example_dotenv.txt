@@ -1,0 +1,2 @@
+DB_URI=mongodb+srv://prayingmantics:yeleyrbc@cluster0.0zilz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+PROXY_URL=http://prayingmantics401a:yeleyrbc@us.proxymesh.com:31280

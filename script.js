@@ -1,16 +1,25 @@
 const { Builder, By, until } = require("selenium-webdriver");
-const { v4: uuidv4 } = require("uuid");
 const chrome = require("selenium-webdriver/chrome");
 
-(async function twitterDataFetching() {
-  const proxyUrl = "http://prayingmantics401a:yeleyrbc@us.proxymesh.com:31280";
+async function createDriver() {
+  const proxyUrl = process.env.PROXY_URL;
   const options = new chrome.Options();
   options.addArguments(`--proxy-server=${proxyUrl}`);
-  let browser = await new Builder()
+  let driver = await new Builder()
     .forBrowser("chrome")
-    .setChromeOptions(options)
+    .setChromeOptions({
+      options,
+      // proxyType: "manual",
+      // httpProxy: proxyUrl,
+      // sslProxy: proxyUrl,
+    })
     .build();
 
+  return driver;
+}
+
+async function twitterDataFetching() {
+  let browser = await createDriver();
   try {
     //Visit the website
     await browser.get("https://x.com");
@@ -70,19 +79,24 @@ const chrome = require("selenium-webdriver/chrome");
     }
 
     //visit to get ip
-    await driver.get("https://api.ipify.org?format=text");
+    await browser.get("https://api.ipify.org?format=text");
 
     // Wait for the page to load
-    await driver.sleep(2000); // Sleep for 2 seconds
+    await browser.sleep(2000); // Sleep for 2 seconds
 
     // Extract the IP address from the page
-    const ipAddress = await driver.findElement(By.tagName("body")).getText();
+    const ipAddress = await browser.findElement(By.tagName("body")).getText();
 
     // Log the IP address to the console
-    console.log("IP Address: ", ipAddress);
-    console.log(result);
-    return result;
+    return {
+      trendingTopics: result,
+      ipAddress: ipAddress,
+      dateTime: new Date(),
+    };
   } finally {
+    await browser.manage().deleteAllCookies();
     await browser.quit();
   }
-})();
+}
+
+module.exports = twitterDataFetching;
