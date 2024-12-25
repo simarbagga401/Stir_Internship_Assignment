@@ -11,9 +11,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Twitter Trending Topics</title>
-    <script type="module" src="./script.js"></script>
+    <script>
+      async function fetchTwitterPosts() {
+        const fetchedPosts = await twitterDataFetching();
+        console.log(fetchedPosts);
+      }
+    </script>
   </head>
   <body>
-
+    <a onclick="twitterDataFetching()">click me</a>
+    <ul>
+      <li id="l1"></li>
+      <li id="l2"></li>
+      <li id="l3"></li>
+      <li id="l4"></li>
+      <li id="l5"></li>
+    </ul>
+    <script src="script.js"></script>
   </body>
 </html>
